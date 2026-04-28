@@ -3,326 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎵 M3U Player</title>
+    <title>M3U Player - TV & Música</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; padding: 20px; color: #fff; }
+        .container { max-width: 1000px; margin: 0 auto; background: rgba(0,0,0,0.8); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid #333; }
+        header { background: linear-gradient(135deg, #e94560, #0f3460); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         header h1 { font-size: 24px; }
-        
         .controls { display: flex; gap: 10px; flex-wrap: wrap; }
-        
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: white;
-            color: #667eea;
-            font-weight: 600;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 30px;
-        }
-        
-        .playlist-section {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            max-height: 60vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .section-header h2 { font-size: 18px; color: #333; }
-        
-        #trackCount {
-            font-size: 14px;
-            color: #666;
-            background: #e0e0e0;
-            padding: 5px 10px;
-            border-radius: 15px;
-        }
-        
-        .playlist {
-            list-style: none;
-            overflow-y: auto;
-            flex: 1;
-        }
-        
-        .playlist li {
-            padding: 12px 15px;
-            margin: 5px 0;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s ease;
-            border-left: 4px solid transparent;
-        }
-        
-        .playlist li:hover {
-            background: #e3e8ff;
-            transform: translateX(5px);
-        }
-        
-        .playlist li.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-left-color: #ffd700;
-        }
-        
-        .playlist li .track-name {
-            font-weight: 500;
-            flex: 1;
-            margin-right: 10px;
-        }
-        
-        .playlist li .remove-btn {
-            background: #ff4757;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-        }
-        
-        .player-section {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .now-playing {
-            text-align: center;
-            width: 100%;
-        }
-        
-        .album-art {
-            font-size: 80px;
-            margin-bottom: 15px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .track-info h3 {
-            color: #333;
-            margin-bottom: 5px;
-            font-size: 18px;
-        }
-        
-        .track-info p { color: #666; font-size: 14px; }
-        
-        audio { width: 100%; border-radius: 10px; }
-        
-        .player-controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .player-controls button {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-        
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            max-width: 300px;
-        }
-        
-        .volume-control input[type="range"] {
-            flex: 1;
-            height: 5px;
-            border-radius: 5px;
-            background: #ddd;
-            outline: none;
-        }
-        
-        .export-section {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .export-section button { background: #667eea; color: white; }
-        #clearBtn { background: #ff4757; }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
+        button { padding: 10px 20px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s; backdrop-filter: blur(10px); }
+        button:hover { background: #e94560; border-color: #e94560; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(233,69,96,0.4); }
+        button.primary { background: #e94560; border-color: #e94560; }
+        .main-content { display: grid; grid-template-columns: 350px 1fr; gap: 0; }
+        @media (max-width: 768px) { .main-content { grid-template-columns: 1fr; } }
+        .playlist-panel { background: rgba(0,0,0,0.4); border-right: 1px solid #333; padding: 20px; max-height: 70vh; display: flex; flex-direction: column; }
+        .playlist-panel h2 { margin-bottom: 15px; font-size: 16px; color: #e94560; display: flex; justify-content: space-between; }
+        .playlist-panel h2 span { font-size: 12px; background: #333; padding: 3px 10px; border-radius: 15px; color: #aaa; }
+        #playlist { list-style: none; overflow-y: auto; flex: 1; }
+        #playlist::-webkit-scrollbar { width: 5px; }
+        #playlist::-webkit-scrollbar-thumb { background: #e94560; border-radius: 10px; }
+        #playlist li { padding: 10px 12px; margin: 3px 0; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s; border-left: 3px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #playlist li:hover { background: rgba(233,69,96,0.2); border-left-color: #e94560; }
+        #playlist li.active { background: rgba(233,69,96,0.4); border-left-color: #ff0; color: #fff; }
+        .player-panel { padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .video-container { width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 15px; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+        video, audio { width: 100%; max-height: 400px; border-radius: 10px; outline: none; }
+        .video-container .placeholder { font-size: 60px; opacity: 0.3; }
+        #currentInfo { text-align: center; margin-bottom: 15px; width: 100%; }
+        #currentInfo h3 { font-size: 16px; color: #e94560; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #currentInfo p { font-size: 12px; color: #888; }
+        .player-controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .player-controls button { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; padding: 0; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; }
         .modal.active { display: flex; }
-        
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 400px;
-            width: 90%;
-        }
-        
-        .modal-content h3 { margin-bottom: 20px; color: #333; }
-        
-        .modal-content input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-        
-        .modal-buttons button { color: white; }
-        #cancelUrlBtn { background: #666; }
-        
-        @media (max-width: 768px) {
-            .main-content { grid-template-columns: 1fr; }
-            header { flex-direction: column; text-align: center; }
-        }
+        .modal-content { background: #1a1a2e; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%; border: 1px solid #333; }
+        .modal-content h3 { margin-bottom: 15px; color: #e94560; }
+        .modal-content input, .modal-content textarea { width: 100%; padding: 12px; margin: 8px 0; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; }
+        .modal-content textarea { height: 100px; resize: vertical; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .hidden-file-input { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎵 M3U Player</h1>
+            <h1>📺 M3U Player Universal</h1>
             <div class="controls">
-                <button id="loadSampleBtn">📁 Carregar Exemplo</button>
-                <input type="file" id="fileInput" accept=".m3u,.m3u8" hidden>
+                <button id="openUrlBtn">🔗 Abrir Playlist/URL</button>
                 <button id="uploadBtn">📤 Upload M3U</button>
-                <button id="addUrlBtn">🔗 Adicionar URL</button>
+                <input type="file" id="fileInput" accept=".m3u,.m3u8" class="hidden-file-input">
+                <button id="exportBtn">💾 Exportar</button>
+                <button id="clearBtn" style="border-color:#e94560;color:#e94560;">🗑️ Limpar</button>
             </div>
         </header>
 
         <div class="main-content">
-            <div class="playlist-section">
-                <div class="section-header">
-                    <h2>📋 Playlist</h2>
-                    <span id="trackCount">0 músicas</span>
-                </div>
-                <ul id="playlist" class="playlist"></ul>
+            <div class="playlist-panel">
+                <h2>📋 Playlist <span id="trackCount">0 itens</span></h2>
+                <ul id="playlist"></ul>
             </div>
 
-            <div class="player-section">
-                <div class="now-playing">
-                    <div class="album-art">🎶</div>
-                    <div class="track-info">
-                        <h3 id="currentTitle">Nenhuma música</h3>
-                        <p id="currentArtist">Selecione uma faixa</p>
-                    </div>
+            <div class="player-panel">
+                <div class="video-container" id="videoContainer">
+                    <video id="videoPlayer" controls style="display:none;"></video>
+                    <audio id="audioPlayer" controls style="display:none;"></audio>
+                    <div class="placeholder" id="placeholder">📺</div>
                 </div>
-
-                <audio id="audioPlayer" controls></audio>
-
+                <div id="currentInfo">
+                    <h3 id="currentTitle">Nada em reprodução</h3>
+                    <p id="currentUrl">Aguardando conteúdo...</p>
+                </div>
                 <div class="player-controls">
                     <button id="prevBtn" title="Anterior">⏮️</button>
-                    <button id="playBtn" title="Play/Pause">▶️</button>
-                    <button id="nextBtn" title="Próxima">⏭️</button>
-                    <button id="shuffleBtn" title="Aleatório">🔀</button>
-                    <button id="repeatBtn" title="Repetir">🔁</button>
-                </div>
-
-                <div class="volume-control">
-                    <span>🔊</span>
-                    <input type="range" id="volumeSlider" min="0" max="100" value="70">
-                </div>
-
-                <div class="export-section">
-                    <button id="exportBtn">💾 Exportar M3U</button>
-                    <button id="clearBtn">🗑️ Limpar Playlist</button>
+                    <button id="playBtn" title="Reproduzir/Pausar">▶️</button>
+                    <button id="nextBtn" title="Próximo">⏭️</button>
+                    <button id="stopBtn" title="Parar">⏹️</button>
                 </div>
             </div>
         </div>
 
         <div id="urlModal" class="modal">
             <div class="modal-content">
-                <h3>Adicionar URL</h3>
-                <input type="text" id="urlInput" placeholder="https://exemplo.com/musica.mp3">
-                <input type="text" id="titleInput" placeholder="Nome da música (opcional)">
+                <h3>🔗 Abrir Playlist ou URL Direta</h3>
+                <input type="text" id="urlInput" placeholder="https://exemplo.com/playlist.m3u ou link direto .mp3/.m3u8">
+                <textarea id="playlistTextarea" placeholder="Ou cole o conteúdo M3U aqui..."></textarea>
                 <div class="modal-buttons">
-                    <button id="confirmUrlBtn">Adicionar</button>
+                    <button id="loadUrlBtn" class="primary">▶️ Carregar</button>
                     <button id="cancelUrlBtn">Cancelar</button>
                 </div>
             </div>
@@ -330,125 +97,202 @@
     </div>
 
     <script>
-        class M3UPlayer {
-            constructor() {
-                this.playlist = [];
-                this.currentIndex = -1;
-                this.isShuffled = false;
-                this.isRepeating = false;
+        (function() {
+            // Estado do player
+            const state = {
+                playlist: [],
+                currentIndex: -1,
+                hls: null,
+                isVideo: false,
+                currentUrl: '',
+                currentTitle: ''
+            };
+
+            // Elementos DOM
+            const els = {
+                videoPlayer: document.getElementById('videoPlayer'),
+                audioPlayer: document.getElementById('audioPlayer'),
+                videoContainer: document.getElementById('videoContainer'),
+                placeholder: document.getElementById('placeholder'),
+                playlist: document.getElementById('playlist'),
+                trackCount: document.getElementById('trackCount'),
+                currentTitle: document.getElementById('currentTitle'),
+                currentUrl: document.getElementById('currentUrl'),
+                playBtn: document.getElementById('playBtn'),
+                urlModal: document.getElementById('urlModal'),
+                urlInput: document.getElementById('urlInput'),
+                playlistTextarea: document.getElementById('playlistTextarea')
+            };
+
+            // Detectar tipo de mídia pela extensão ou conteúdo
+            function detectMediaType(url) {
+                const videoExtensions = ['.m3u8', '.ts', '.mp4', '.webm', '.ogg', '.mkv', '.avi', '.mov', '.flv'];
+                const lowerUrl = url.toLowerCase();
                 
-                this.initElements();
-                this.bindEvents();
-                this.updatePlaylistUI();
+                for (const ext of videoExtensions) {
+                    if (lowerUrl.includes(ext)) return 'video';
+                }
+                
+                // Se o conteúdo M3U contiver links de vídeo, trata como vídeo
+                if (lowerUrl.includes('#ext-x-') || lowerUrl.includes('type=video')) return 'video';
+                
+                return 'audio';
             }
 
-            initElements() {
-                this.audioPlayer = document.getElementById('audioPlayer');
-                this.playlistElement = document.getElementById('playlist');
-                this.currentTitle = document.getElementById('currentTitle');
-                this.currentArtist = document.getElementById('currentArtist');
-                this.trackCount = document.getElementById('trackCount');
-                this.volumeSlider = document.getElementById('volumeSlider');
-                this.playBtn = document.getElementById('playBtn');
-                this.urlModal = document.getElementById('urlModal');
+            // Destruir HLS anterior
+            function destroyHls() {
+                if (state.hls) {
+                    state.hls.destroy();
+                    state.hls = null;
+                }
             }
 
-            bindEvents() {
-                document.getElementById('uploadBtn').addEventListener('click', () => {
-                    document.getElementById('fileInput').click();
-                });
-                
-                document.getElementById('fileInput').addEventListener('change', (e) => {
-                    this.handleFileUpload(e.target.files[0]);
-                });
-
-                document.getElementById('playBtn').addEventListener('click', () => this.togglePlay());
-                document.getElementById('prevBtn').addEventListener('click', () => this.playPrevious());
-                document.getElementById('nextBtn').addEventListener('click', () => this.playNext());
-                document.getElementById('shuffleBtn').addEventListener('click', () => this.toggleShuffle());
-                document.getElementById('repeatBtn').addEventListener('click', () => this.toggleRepeat());
-                
-                this.volumeSlider.addEventListener('input', (e) => {
-                    this.audioPlayer.volume = e.target.value / 100;
-                });
-                this.audioPlayer.volume = 0.7;
-
-                this.audioPlayer.addEventListener('ended', () => this.handleTrackEnd());
-                this.audioPlayer.addEventListener('error', () => this.playNext());
-
-                document.getElementById('addUrlBtn').addEventListener('click', () => {
-                    this.urlModal.classList.add('active');
-                });
-                document.getElementById('confirmUrlBtn').addEventListener('click', () => this.addUrlTrack());
-                document.getElementById('cancelUrlBtn').addEventListener('click', () => {
-                    this.urlModal.classList.remove('active');
-                });
-
-                document.getElementById('exportBtn').addEventListener('click', () => this.exportPlaylist());
-                document.getElementById('clearBtn').addEventListener('click', () => this.clearPlaylist());
-                document.getElementById('loadSampleBtn').addEventListener('click', () => this.loadSamplePlaylist());
+            // Limpar player
+            function resetPlayer() {
+                destroyHls();
+                els.videoPlayer.style.display = 'none';
+                els.audioPlayer.style.display = 'none';
+                els.placeholder.style.display = 'block';
+                els.videoPlayer.src = '';
+                els.audioPlayer.src = '';
+                state.isVideo = false;
+                state.currentUrl = '';
+                state.currentTitle = '';
             }
 
-            loadSamplePlaylist() {
-                this.playlist = [
-                    {
-                        title: "Happy Rock",
-                        artist: "Bensound",
-                        url: "https://www.bensound.com/bensound-music/bensound-happyrock.mp3"
-                    },
-                    {
-                        title: "Sunny",
-                        artist: "Bensound",
-                        url: "https://www.bensound.com/bensound-music/bensound-sunny.mp3"
-                    },
-                    {
-                        title: "Ukulele",
-                        artist: "Bensound",
-                        url: "https://www.bensound.com/bensound-music/bensound-ukulele.mp3"
+            // Tocar mídia
+            function playMedia(index) {
+                if (index < 0 || index >= state.playlist.length) return;
+
+                state.currentIndex = index;
+                const track = state.playlist[index];
+                const url = track.url;
+                const title = track.title || 'Sem título';
+                const type = detectMediaType(url);
+
+                resetPlayer();
+                state.currentUrl = url;
+                state.currentTitle = title;
+
+                els.currentTitle.textContent = title;
+                els.currentUrl.textContent = url;
+
+                if (type === 'video') {
+                    // Usar HLS.js para streams de vídeo
+                    els.audioPlayer.style.display = 'none';
+                    els.videoPlayer.style.display = 'block';
+                    els.placeholder.style.display = 'none';
+                    
+                    if (Hls.isSupported()) {
+                        destroyHls();
+                        state.hls = new Hls({
+                            maxBufferLength: 30,
+                            liveSyncDuration: 15,
+                            liveMaxLatencyDuration: 20,
+                            enableWorker: true
+                        });
+                        state.hls.loadSource(url);
+                        state.hls.attachMedia(els.videoPlayer);
+                        state.hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                            els.videoPlayer.play().catch(() => {});
+                        });
+                        state.hls.on(Hls.Events.ERROR, function(event, data) {
+                            if (data.fatal) {
+                                console.error('Erro HLS:', data);
+                                alert('Erro ao carregar stream de vídeo');
+                            }
+                        });
+                    } else if (els.videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                        // Safari suporta HLS nativamente
+                        els.videoPlayer.src = url;
+                        els.videoPlayer.play().catch(() => {});
+                    } else {
+                        alert('HLS não é suportado neste navegador');
                     }
-                ];
-                
-                this.updatePlaylistUI();
-                this.playTrack(0);
+                    state.isVideo = true;
+                } else {
+                    // Áudio normal
+                    els.videoPlayer.style.display = 'none';
+                    els.audioPlayer.style.display = 'block';
+                    els.placeholder.style.display = 'none';
+                    els.audioPlayer.src = url;
+                    els.audioPlayer.play().catch(() => {
+                        alert('Erro ao carregar áudio');
+                    });
+                    state.isVideo = false;
+                }
+
+                els.playBtn.textContent = '⏸️';
+                updatePlaylistUI();
             }
 
-            handleFileUpload(file) {
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.parseM3U(e.target.result);
-                };
-                reader.readAsText(file);
+            // Parar reprodução
+            function stopMedia() {
+                if (state.isVideo) {
+                    els.videoPlayer.pause();
+                    els.videoPlayer.currentTime = 0;
+                } else {
+                    els.audioPlayer.pause();
+                    els.audioPlayer.currentTime = 0;
+                }
+                els.playBtn.textContent = '▶️';
             }
 
-            parseM3U(content) {
+            // Play/Pause
+            function togglePlayPause() {
+                const player = state.isVideo ? els.videoPlayer : els.audioPlayer;
+                if (player.paused) {
+                    player.play();
+                    els.playBtn.textContent = '⏸️';
+                } else {
+                    player.pause();
+                    els.playBtn.textContent = '▶️';
+                }
+            }
+
+            // Próximo
+            function playNext() {
+                if (state.playlist.length === 0) return;
+                const nextIndex = (state.currentIndex + 1) % state.playlist.length;
+                playMedia(nextIndex);
+            }
+
+            // Anterior
+            function playPrevious() {
+                if (state.playlist.length === 0) return;
+                const prevIndex = state.currentIndex - 1 < 0 ? state.playlist.length - 1 : state.currentIndex - 1;
+                playMedia(prevIndex);
+            }
+
+            // Parse M3U otimizado
+            function parseM3U(content) {
                 const lines = content.split('\n');
                 const tracks = [];
                 let currentTrack = null;
 
-                for (let line of lines) {
-                    line = line.trim();
-                    
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    if (!line || line.startsWith('#EXTM3U')) continue;
+
                     if (line.startsWith('#EXTINF:')) {
                         const info = line.substring(8);
                         const commaIndex = info.indexOf(',');
-                        
+                        let title = '';
                         if (commaIndex > -1) {
-                            const title = info.substring(commaIndex + 1);
-                            currentTrack = {
-                                title: title || 'Unknown Track',
-                                artist: 'Unknown Artist'
-                            };
+                            title = info.substring(commaIndex + 1).trim();
                         }
-                    } else if (line.startsWith('http')) {
+                        currentTrack = {
+                            title: title || `Faixa ${tracks.length + 1}`,
+                            url: ''
+                        };
+                    } else if (line.startsWith('http') || line.startsWith('https') || line.startsWith('rtmp') || line.startsWith('rtsp')) {
                         if (currentTrack) {
                             currentTrack.url = line;
                             tracks.push(currentTrack);
                         } else {
                             tracks.push({
-                                title: 'Radio Stream',
-                                artist: 'Live',
+                                title: `Stream ${tracks.length + 1}`,
                                 url: line
                             });
                         }
@@ -456,196 +300,156 @@
                     }
                 }
 
-                if (tracks.length > 0) {
-                    this.playlist = tracks;
-                    this.updatePlaylistUI();
-                    this.playTrack(0);
-                } else {
-                    alert('Nenhuma faixa encontrada!');
-                }
+                return tracks;
             }
 
-            updatePlaylistUI() {
-                this.playlistElement.innerHTML = '';
-                this.trackCount.textContent = `${this.playlist.length} músicas`;
-
-                this.playlist.forEach((track, index) => {
+            // Atualizar UI da playlist (otimizado para listas grandes)
+            function updatePlaylistUI() {
+                const fragment = document.createDocumentFragment();
+                
+                for (let i = 0; i < state.playlist.length; i++) {
+                    const track = state.playlist[i];
                     const li = document.createElement('li');
-                    li.innerHTML = `
-                        <span class="track-name">${track.title || 'Track ' + (index + 1)}</span>
-                        <button class="remove-btn" data-index="${index}">✕</button>
-                    `;
+                    li.textContent = track.title || `Faixa ${i + 1}`;
+                    li.dataset.index = i;
                     
-                    li.addEventListener('click', (e) => {
-                        if (!e.target.classList.contains('remove-btn')) {
-                            this.playTrack(index);
-                        }
-                    });
-
-                    li.querySelector('.remove-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.removeTrack(index);
-                    });
-
-                    if (index === this.currentIndex) {
+                    if (i === state.currentIndex) {
                         li.classList.add('active');
                     }
-
-                    this.playlistElement.appendChild(li);
-                });
-            }
-
-            playTrack(index) {
-                if (index < 0 || index >= this.playlist.length) return;
-
-                this.currentIndex = index;
-                const track = this.playlist[index];
-
-                this.audioPlayer.src = track.url;
-                this.currentTitle.textContent = track.title || 'Unknown Track';
-                this.currentArtist.textContent = track.artist || 'Unknown Artist';
-                
-                this.audioPlayer.play()
-                    .then(() => {
-                        this.playBtn.textContent = '⏸️';
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        alert('Não foi possível reproduzir esta faixa.');
+                    
+                    li.addEventListener('click', function() {
+                        playMedia(parseInt(this.dataset.index));
                     });
-
-                this.updatePlaylistUI();
-            }
-
-            togglePlay() {
-                if (this.audioPlayer.paused) {
-                    this.audioPlayer.play();
-                    this.playBtn.textContent = '⏸️';
-                } else {
-                    this.audioPlayer.pause();
-                    this.playBtn.textContent = '▶️';
+                    
+                    fragment.appendChild(li);
                 }
-            }
-
-            playNext() {
-                if (this.playlist.length === 0) return;
                 
-                let nextIndex = this.isShuffled 
-                    ? Math.floor(Math.random() * this.playlist.length)
-                    : (this.currentIndex + 1) % this.playlist.length;
-                
-                this.playTrack(nextIndex);
+                els.playlist.innerHTML = '';
+                els.playlist.appendChild(fragment);
+                els.trackCount.textContent = `${state.playlist.length} itens`;
             }
 
-            playPrevious() {
-                if (this.playlist.length === 0) return;
-                
-                let prevIndex = this.currentIndex - 1;
-                if (prevIndex < 0) prevIndex = this.playlist.length - 1;
-                
-                this.playTrack(prevIndex);
-            }
-
-            handleTrackEnd() {
-                if (this.isRepeating) {
-                    this.audioPlayer.currentTime = 0;
-                    this.audioPlayer.play();
-                } else {
-                    this.playNext();
-                }
-            }
-
-            toggleShuffle() {
-                this.isShuffled = !this.isShuffled;
-                const btn = document.getElementById('shuffleBtn');
-                btn.style.background = this.isShuffled ? '#667eea' : 'white';
-                btn.style.color = this.isShuffled ? 'white' : '#667eea';
-            }
-
-            toggleRepeat() {
-                this.isRepeating = !this.isRepeating;
-                const btn = document.getElementById('repeatBtn');
-                btn.style.background = this.isRepeating ? '#667eea' : 'white';
-                btn.style.color = this.isRepeating ? 'white' : '#667eea';
-            }
-
-            addUrlTrack() {
-                const url = document.getElementById('urlInput').value.trim();
-                const title = document.getElementById('titleInput').value.trim();
-
-                if (!url) {
-                    alert('Por favor, insira uma URL!');
+            // Carregar playlist
+            function loadPlaylist(tracks) {
+                if (!tracks || tracks.length === 0) {
+                    alert('Nenhuma faixa encontrada!');
                     return;
                 }
-
-                this.playlist.push({
-                    title: title || 'Added Track',
-                    artist: 'Custom URL',
-                    url: url
-                });
-                
-                this.updatePlaylistUI();
-                this.urlModal.classList.remove('active');
-                document.getElementById('urlInput').value = '';
-                document.getElementById('titleInput').value = '';
+                state.playlist = tracks;
+                state.currentIndex = -1;
+                resetPlayer();
+                updatePlaylistUI();
             }
 
-            removeTrack(index) {
-                if (confirm('Remover esta faixa?')) {
-                    this.playlist.splice(index, 1);
-                    
-                    if (index === this.currentIndex) {
-                        this.audioPlayer.pause();
-                        this.currentTitle.textContent = 'Nenhuma música';
-                        this.currentArtist.textContent = 'Selecione uma faixa';
-                        this.currentIndex = -1;
-                    } else if (index < this.currentIndex) {
-                        this.currentIndex--;
+            // Event Listeners
+            document.getElementById('openUrlBtn').addEventListener('click', function() {
+                els.urlModal.classList.add('active');
+                els.urlInput.value = '';
+                els.playlistTextarea.value = '';
+            });
+
+            document.getElementById('cancelUrlBtn').addEventListener('click', function() {
+                els.urlModal.classList.remove('active');
+            });
+
+            document.getElementById('loadUrlBtn').addEventListener('click', function() {
+                const url = els.urlInput.value.trim();
+                const text = els.playlistTextarea.value.trim();
+
+                if (url) {
+                    if (detectMediaType(url) !== 'audio' || url.endsWith('.m3u') || url.endsWith('.m3u8')) {
+                        // É uma playlist M3U ou link de vídeo direto
+                        fetch(url)
+                            .then(response => response.text())
+                            .then(content => {
+                                const tracks = parseM3U(content);
+                                if (tracks.length > 0) {
+                                    loadPlaylist(tracks);
+                                } else {
+                                    // Link direto
+                                    loadPlaylist([{ title: 'Link Direto', url: url }]);
+                                }
+                            })
+                            .catch(() => {
+                                // Tratar como link direto
+                                loadPlaylist([{ title: 'Link Direto', url: url }]);
+                            });
+                    } else {
+                        // Link direto de áudio
+                        loadPlaylist([{ title: 'Link Direto', url: url }]);
                     }
-                    
-                    this.updatePlaylistUI();
+                } else if (text) {
+                    const tracks = parseM3U(text);
+                    loadPlaylist(tracks);
+                } else {
+                    alert('Insira uma URL ou cole o conteúdo M3U!');
                 }
-            }
 
-            exportPlaylist() {
-                if (this.playlist.length === 0) {
+                els.urlModal.classList.remove('active');
+            });
+
+            document.getElementById('uploadBtn').addEventListener('click', function() {
+                document.getElementById('fileInput').click();
+            });
+
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const tracks = parseM3U(e.target.result);
+                    loadPlaylist(tracks);
+                };
+                reader.readAsText(file);
+            });
+
+            document.getElementById('playBtn').addEventListener('click', togglePlayPause);
+            document.getElementById('nextBtn').addEventListener('click', playNext);
+            document.getElementById('prevBtn').addEventListener('click', playPrevious);
+            document.getElementById('stopBtn').addEventListener('click', stopMedia);
+
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                if (state.playlist.length === 0) {
                     alert('Playlist vazia!');
                     return;
                 }
-
-                let m3uContent = '#EXTM3U\n';
                 
-                this.playlist.forEach(track => {
-                    m3uContent += `#EXTINF:-1,${track.title}\n`;
-                    m3uContent += `${track.url}\n\n`;
-                });
-
-                const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                let content = '#EXTM3U\n';
+                for (const track of state.playlist) {
+                    content += `#EXTINF:-1,${track.title}\n${track.url}\n\n`;
+                }
+                
+                const blob = new Blob([content], { type: 'audio/x-mpegurl' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = 'playlist.m3u';
                 a.click();
                 URL.revokeObjectURL(url);
-            }
+            });
 
-            clearPlaylist() {
+            document.getElementById('clearBtn').addEventListener('click', function() {
                 if (confirm('Limpar toda a playlist?')) {
-                    this.playlist = [];
-                    this.currentIndex = -1;
-                    this.audioPlayer.pause();
-                    this.audioPlayer.src = '';
-                    this.currentTitle.textContent = 'Nenhuma música';
-                    this.currentArtist.textContent = 'Selecione uma faixa';
-                    this.playBtn.textContent = '▶️';
-                    this.updatePlaylistUI();
+                    state.playlist = [];
+                    state.currentIndex = -1;
+                    resetPlayer();
+                    updatePlaylistUI();
+                    els.currentTitle.textContent = 'Nada em reprodução';
+                    els.currentUrl.textContent = 'Aguardando conteúdo...';
+                    els.playBtn.textContent = '▶️';
                 }
-            }
-        }
+            });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            new M3UPlayer();
-        });
+            // Eventos dos players
+            els.videoPlayer.addEventListener('ended', playNext);
+            els.audioPlayer.addEventListener('ended', playNext);
+            els.videoPlayer.addEventListener('play', function() { els.playBtn.textContent = '⏸️'; });
+            els.videoPlayer.addEventListener('pause', function() { els.playBtn.textContent = '▶️'; });
+            els.audioPlayer.addEventListener('play', function() { els.playBtn.textContent = '⏸️'; });
+            els.audioPlayer.addEventListener('pause', function() { els.playBtn.textContent = '▶️'; });
+
+        })();
     </script>
 </body>
 </html>
